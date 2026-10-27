@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Briefing da Ideia — MVP | Inovação e Tecnologia no Agro</title>
+<style>
+  :root{
+    --verde:#0f3d2e; --verde2:#17553f; --lima:#c8f169; --creme:#f7f5ef;
+    --tinta:#16211c; --cinza:#5d6b64; --linha:#dcd8cc; --erro:#b3261e;
+    --ok:#1a7f37; --raio:14px;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--creme); color:var(--tinta);
+    font:16px/1.55 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif;
+  }
+  header{background:linear-gradient(160deg,var(--verde),var(--verde2)); color:#fff; padding:28px 20px 22px}
+  .wrap{max-width:860px;margin:0 auto;padding:0 20px}
+  header .wrap{padding:0}
+  .kicker{display:inline-block;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--lima);font-weight:700;margin-bottom:10px}
+  h1{font-size:clamp(22px,5vw,30px);line-height:1.2;margin:0 0 8px;font-weight:800}
+  header p{margin:0;color:#d9e6df;font-size:15px;max-width:62ch}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;font-size:13px}
+  .meta span{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);padding:5px 10px;border-radius:999px}
+
+  .barra{position:sticky;top:0;z-index:20;background:var(--creme);border-bottom:1px solid var(--linha)}
+  .barra .wrap{padding:0 20px}
+  .linha-prog{display:flex;align-items:center;gap:12px;padding:10px 0 6px}
+  .trilha{flex:1;height:8px;background:#e4e0d4;border-radius:999px;overflow:hidden}
+  .trilha i{display:block;height:100%;width:0;background:var(--verde2);transition:width .25s}
+  .pct{font-size:13px;font-weight:700;color:var(--verde);min-width:52px;text-align:right}
+  .chips{display:flex;gap:6px;overflow-x:auto;padding:0 0 9px;scrollbar-width:none}
+  .chips::-webkit-scrollbar{display:none}
+  .chip{font-size:12.5px;padding:6px 10px;border-radius:999px;border:1px solid var(--linha);background:#fff;color:var(--cinza);text-decoration:none;white-space:nowrap;font-weight:600}
+  .chip:hover{border-color:var(--verde2)}
+  .chip.ativo{background:var(--verde);color:#fff;border-color:var(--verde)}
+
+  main{padding:26px 0 200px}
+  section{background:#fff;border:1px solid var(--linha);border-radius:var(--raio);padding:22px;margin-bottom:18px;scroll-margin-top:104px}
+  section > h2{font-size:15px;text-transform:uppercase;letter-spacing:.08em;margin:0 0 4px;color:var(--verde);display:flex;gap:10px;align-items:center}
+  section > h2 b{background:var(--verde);color:var(--lima);width:24px;height:24px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;font-size:13px;flex:0 0 auto}
+  .sub{margin:0 0 18px;color:var(--cinza);font-size:14px}
+  .bloco-aula{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--verde2);background:#eef6ef;border-radius:999px;padding:3px 9px;margin:0 0 14px}
+
+  .campo{margin:0 0 20px}
+  .campo:last-child{margin-bottom:0}
+  label{display:block;font-weight:600;margin-bottom:6px;font-size:15px}
+  label .req{color:var(--erro);margin-left:2px}
+  .ajuda{display:block;font-weight:400;color:var(--cinza);font-size:13.5px;margin:2px 0 8px}
+  .exemplo{display:block;font-size:13px;color:var(--verde2);background:#f1f7f2;border-left:3px solid var(--verde2);padding:8px 10px;border-radius:0 6px 6px 0;margin:0 0 8px}
+  input[type=text],input[type=email],input[type=tel],input[type=number],textarea,select{
+    width:100%;padding:12px 14px;border:1px solid var(--linha);border-radius:10px;font:inherit;color:inherit;background:#fdfcf9;
+  }
+  textarea{resize:vertical;min-height:92px}
+  textarea.baixo{min-height:70px}
+  input:focus,textarea:focus,select:focus{outline:2px solid var(--verde2);outline-offset:1px;border-color:var(--verde2)}
+  .opcoes{display:grid;gap:8px}
+  .opcoes label{display:flex;align-items:flex-start;gap:10px;font-weight:400;margin:0;border:1px solid var(--linha);border-radius:10px;padding:11px 13px;cursor:pointer;background:#fdfcf9;min-height:44px}
+  .opcoes label:hover{border-color:var(--verde2)}
+  .opcoes input{margin:3px 0 0;accent-color:var(--verde2);width:18px;height:18px;flex:0 0 auto}
+  .opcoes.inline{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+  .grid2{display:grid;gap:16px}
+  @media(min-width:600px){.grid2{grid-template-columns:1fr 1fr}}
+  .oculto{display:none !important}
+  .invalid{border-color:var(--erro)!important;background:#fff6f5!important}
+  .contador{font-size:12px;color:var(--cinza);text-align:right;margin-top:4px}
+  .contador.estouro{color:var(--erro);font-weight:700}
+
+  .aviso{border-left:4px solid var(--verde2);background:#eef6ef;border-radius:8px;padding:12px 14px;font-size:14px;margin:0 0 18px}
+  .aviso b{color:var(--verde)}
+  .nota{font-size:13px;color:var(--cinza);margin:8px 0 0}
+  .nota b{color:var(--tinta)}
+  .nota.erro{color:var(--erro);font-weight:600}
+  .fmt{display:block;font-size:12.5px;color:var(--cinza);margin-top:4px}
+
+  .painel{background:var(--verde);color:#fff;border-radius:12px;padding:16px;margin:6px 0 20px}
+  .painel h3{margin:0 0 12px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--lima)}
+  .metricas{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px}
+  .metrica{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:10px 12px}
+  .metrica span{display:block;font-size:11.5px;color:#c9d8d0;text-transform:uppercase;letter-spacing:.05em}
+  .metrica b{display:block;font-size:20px;margin-top:2px;font-variant-numeric:tabular-nums}
+  .metrica b.ok{color:var(--lima)}
+  .metrica b.ruim{color:#ffb4a8}
+  .alerta{border-left:4px solid #d98b00;background:#fff6e0;border-radius:8px;padding:11px 13px;font-size:13.5px;margin:0 0 18px}
+  .alerta b{color:#8a5a00}
+
+  footer.acoes{position:fixed;left:0;right:0;bottom:0;background:#ffffffee;backdrop-filter:blur(6px);border-top:1px solid var(--linha);padding:12px 20px;z-index:30}
+  footer.acoes .wrap{padding:0;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  button{font:inherit;font-weight:700;border-radius:10px;padding:12px 18px;cursor:pointer;border:1px solid transparent;min-height:46px}
+  button:disabled{opacity:.6;cursor:wait}
+  .primario{background:var(--verde);color:#fff}
+  .primario:hover:not(:disabled){background:var(--verde2)}
+  .secundario{background:#fff;color:var(--verde);border-color:var(--verde)}
+  .secundario:hover{background:#eef6ef}
+  .fantasma{background:transparent;color:var(--cinza);font-weight:600}
+  .fantasma:hover{color:var(--erro)}
+  .status{margin-left:auto;font-size:13px;color:var(--cinza)}
+  .status.ok{color:var(--ok);font-weight:700}
+  .status.erro{color:var(--erro);font-weight:700}
+  .rodape{font-size:12.5px;color:var(--cinza);text-align:center;padding:0 0 30px}
+
+  @media (max-width:520px){
+    section{padding:18px 16px}
+    main{padding-bottom:210px}
+    footer.acoes{padding:10px 14px}
+    footer.acoes .wrap{gap:8px}
+    button{padding:11px 12px;font-size:14px;flex:1 1 auto}
+    .primario{flex:1 1 100%}
+    .fantasma{flex:0 0 auto}
+    .status{width:100%;margin-left:0;text-align:center}
+    .grid2{grid-template-columns:1fr}
+  }
+  @media print{
+    .barra,footer.acoes,.rodape,.chips{display:none}
+    body{background:#fff}
+    section{break-inside:avoid;box-shadow:none}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <span class="kicker">Inovação e Tecnologia Aplicada ao Agronegócio</span>
+    <h1>Briefing da Ideia — MVP</h1>
+    <p>O formulário segue os quatro blocos da aula do Módulo 3. Cada pergunta é um insumo de build: o que eu preciso para desenhar as telas e o que a banca vai cobrar de vocês.</p>
+    <div class="meta">
+      <span>8º Adm Cuiabá</span>
+      <span>1 envio por grupo</span>
+      <span>Até 30/10, 23h59</span>
+      <span>≈ 45 min · usem o deck do M3</span>
+    </div>
+  </div>
+</header>
+
+<div class="barra">
+  <div class="wrap">
+    <div class="linha-prog">
+      <div class="trilha"><i id="progresso"></i></div>
+      <span class="pct" id="pct">0%</span>
+    </div>
+    <nav class="chips" id="chips">
+      <a class="chip" href="#s1">1 Identificação</a>
+      <a class="chip" href="#s2">2 Problema</a>
+      <a class="chip" href="#s3">3 Solução</a>
+      <a class="chip" href="#s4">4 Arquitetura</a>
+      <a class="chip" href="#s5">5 Receita</a>
+      <a class="chip" href="#s6">6 Mercado</a>
+      <a class="chip" href="#s7">7 Pitch</a>
+      <a class="chip" href="#s8">8 Fim</a>
+    </nav>
+  </div>
+</div>
+
+<main>
+<div class="wrap">
+
+  <div class="aviso">
+    <b>Contrato de escopo:</b> o MVP terá <b>1 fluxo principal, até 4 telas e dados de exemplo</b>. Tudo além disso é versão 2. Se a ideia tem 10 funcionalidades, escolham as 4 que provam o valor.
+  </div>
+
+  <!-- 1 -->
+  <section id="s1">
+    <h2><b>1</b> Identificação</h2>
+    <p class="sub">Quem está enviando e quem responde às dúvidas durante o build.</p>
+
+    <div class="grid2">
+      <div class="campo">
+        <label for="produto">Nome do produto<span class="req">*</span></label>
+        <span class="ajuda">Como vai aparecer na capa do app.</span>
+        <input type="text" id="produto" data-campo="produto" data-req maxlength="40" placeholder="Ex.: SafraCerta">
+      </div>
+      <div class="campo">
+        <label for="grupo">Grupo<span class="req">*</span></label>
+        <span class="ajuda">Um envio por grupo. Reenvio atualiza a resposta.</span>
+        <select id="grupo" data-campo="grupo" data-req>
+          <option value="">Selecione…</option>
+          <option>Grupo 1</option><option>Grupo 2</option><option>Grupo 3</option>
+          <option>Grupo 4</option><option>Grupo 5</option><option>Grupo 6</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="campo">
+      <label for="integrantes">Integrantes e função<span class="req">*</span></label>
+      <span class="ajuda">Um por linha. A banca pergunta "por que vocês?" — a resposta começa aqui.</span>
+      <textarea id="integrantes" data-campo="integrantes" data-req class="baixo" placeholder="Ana Souza — pesquisa e evidências&#10;Bruno Lima — produto e telas&#10;Carla Dias — números e pitch"></textarea>
+    </div>
+
+    <div class="grid2">
+      <div class="campo">
+        <label for="focal">Ponto focal técnico<span class="req">*</span></label>
+        <span class="ajuda">Único contato para dúvidas de build. Responde em até 24h.</span>
+        <input type="text" id="focal" data-campo="focal" data-req placeholder="Nome completo">
+      </div>
+      <div class="campo">
+        <label for="zap">WhatsApp do ponto focal<span class="req">*</span></label>
+        <span class="ajuda">Formato (65) 9 9999-9999.</span>
+        <input type="tel" id="zap" data-campo="zap" data-req placeholder="(65) 9 9999-9999">
+      </div>
+    </div>
+
+    <div class="campo">
+      <label for="email">E-mail do ponto focal<span class="req">*</span></label>
+      <input type="email" id="email" data-campo="email" data-req placeholder="nome@email.com">
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section id="s2">
+    <h2><b>2</b> Problema e evidência</h2>
+    <span class="bloco-aula">Bloco 4 · slide "O Problema"</span>
+    <p class="sub">A banca sente a dor ou não compra a ideia. Sem número e sem fala de produtor, o slide 2 não se sustenta.</p>
+
+    <div class="campo">
+      <label for="dor">Qual dor o produto resolve?<span class="req">*</span></label>
+      <span class="ajuda">Uma dor só, escrita como consequência — não como falta de tecnologia.</span>
+      <span class="exemplo">"O produtor descobre a falha de pulverização dias depois, quando a lagarta já se espalhou e a perda é irreversível."</span>
+      <textarea id="dor" data-campo="dor" data-req maxlength="400" placeholder="Escreva a dor em uma frase"></textarea>
+    </div>
+
+    <div class="campo">
+      <label>Quem sente essa dor?<span class="req">*</span></label>
+      <div class="opcoes inline" data-grupo="quem" data-req>
+        <label><input type="checkbox" value="Produtor pequeno/médio">Produtor pequeno/médio</label>
+        <label><input type="checkbox" value="Grande produtor">Grande produtor</label>
+        <label><input type="checkbox" value="Cooperativa">Cooperativa</label>
+        <label><input type="checkbox" value="Revenda">Revenda</label>
+        <label><input type="checkbox" value="Trading">Trading</label>
+        <label><input type="checkbox" value="Prestador de serviço">Prestador de serviço</label>
+        <label><input type="checkbox" value="Outro">Outro</label>
+      </div>
+    </div>
+
+    <div class="campo">
+      <label for="persona">Descreva essa pessoa em concreto<span class="req">*</span></label>
+      <span class="ajuda">Porte da propriedade, cultura, região, como decide e onde busca informação.</span>
+      <span class="exemplo">"Produtor de 1.200 ha de soja em Sorriso, 48 anos, decide com o agrônomo, compra na revenda da cidade, usa WhatsApp e Aegro."</span>
+      <textarea id="persona" data-campo="persona" data-req placeholder="Quem é, quanto tem, como decide"></textarea>
+    </div>
+
+    <div class="campo">
+      <label for="hipotese">Hipótese do grupo<span class="req">*</span></label>
+      <span class="ajuda">Formato: acreditamos que [público] sofre [dor] porque [causa]; se oferecermos [solução], então [resultado mensurável].</span>
+      <textarea id="hipotese" data-campo="hipotese" data-req placeholder="Acreditamos que..."></textarea>
+    </div>
+
+    <div class="grid2">
+      <div class="campo">
+        <label for="numero">Tamanho da dor em número<span class="req">*</span></label>
+        <span class="ajuda">Valor por hectare, horas por dia, % de perda, R$ por safra.</span>
+        <input type="text" id="numero" data-campo="numero" data-req placeholder="R$ 40/ha">
+      </div>
+      <div class="campo">
+        <label for="fonte">Fonte e como chegaram nele<span class="req">*</span></label>
+        <span class="ajuda">IMEA, CONAB, IBGE, Embrapa, entrevista ou estimativa — e a conta em 1 linha.</span>
+        <input type="text" id="fonte" data-campo="fonte" data-req placeholder="IMEA 2025 · 2 aplicações perdidas × R$ 20/ha">
+      </div>
+    </div>
+
+    <div class="campo">
+      <label for="entrevistas">Entrevistas realizadas<span class="req">*</span></label>
+      <span class="ajuda">Mínimo 5. Diga quantas, com quem (função) e onde.</span>
+      <textarea id="entrevistas" data-campo="entrevistas" data-req class="baixo" placeholder="6 entrevistas: 4 produtores de soja em Sorriso, 1 gerente de cooperativa, 1 agrônomo de revenda."></textarea>
+    </div>
+
+    <div class="campo">
+      <label for="aprendizados">O que as entrevistas mudaram na ideia<span class="req">*</span></label>
+      <span class="ajuda">Três achados que contrariaram ou ajustaram a hipótese. É a pergunta "como vocês validam?" da sabatina.</span>
+      <span class="exemplo">"1) O produtor não quer mais um app: quer receber no WhatsApp. 2) Quem paga é a revenda, não o produtor. 3) O problema real é o custo da reaplicação, não a detecção."</span>
+      <textarea id="aprendizados" data-campo="aprendizados" data-req placeholder="1) ...&#10;2) ...&#10;3) ..."></textarea>
+    </div>
+
+    <div class="campo">
+      <label for="frase">Uma fala literal de entrevistado<span class="req">*</span></label>
+      <span class="ajuda">Sem corrigir o português. É essa frase que vira o slide do problema.</span>
+      <textarea id="frase" data-campo="frase" data-req class="baixo" placeholder="&quot;Eu só descubro que a lagarta pegou quando já perdi a lavoura.&quot;"></textarea>
+    </div>
+
+    <div class="campo">
+      <label for="pagaria">Evidência de disposição a pagar<span class="req">*</span></label>
+      <span class="ajuda">Quanto pagariam, quem sinalizou, ou por que ainda não pagariam.</span>
+      <span class="exemplo">"3 dos 6 disseram que pagariam até R$ 3/ha/ano; 1 pediu para testar na próxima safra."</span>
+      <textarea id="pagaria" data-campo="pagaria" data-req class="baixo" placeholder="O que ouviram sobre preço"></textarea>
+    </div>
+
+    <div class="campo">
+      <label for="concorrentes">O que o cliente usa hoje<span class="req">*</span></label>
+      <span class="ajuda">Três alternativas reais, com preço e o motivo de não resolverem. "Ninguém faz isso" não vale.</span>
+      <textarea id="concorrentes" data-campo="concorrentes" data-req placeholder="1. Caderno de campo — grátis, mas não alerta&#10;2. Planilha do agrônomo — R$ 0, sem histórico&#10;3. Aegro — R$ X/ha, mas exige digitação"></textarea>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section id="s3">
+    <h2><b>3</b> Solução e escopo</h2>
+    <span class="bloco-aula">Bloco 1 · MVP</span>
+    <p class="sub">Aqui nasce o app. O que não estiver nesta seção não será construído.</p>
+
+    <div class="campo">
+      <label for="promessa">Em uma frase, o que o produto faz?<span class="req">*</span></label>
+      <span class="ajuda">Vai virar o subtítulo do app. Máximo 140 caracteres.</span>
+      <input type="text" id="promessa" data-campo="promessa" data-req maxlength="140" placeholder="Monitora a lavoura por foto e avisa a falha antes de virar perda.">
+      <div class="contador" id="cPromessa">0 / 140</div>
+    </div>
+
+    <div class="campo">
+      <label for="funcs">Funcionalidades do MVP<span class="req">*</span></label>
+      <span class="ajuda">Máximo 5, em ordem. Marque <b>O</b> (obrigatória para o MVP) e <b>D</b> (desejável).</span>
+      <textarea id="funcs" data-campo="funcs" data-req placeholder="O 1. Registrar talhão&#10;O 2. Tirar foto da folha&#10;O 3. Receber diagnóstico com confiança&#10;D 4. Histórico por talhão"></textarea>
+    </div>
+
+    <div class="campo">
+      <label for="fluxo">Fluxo principal: passo 1, 2, 3…<span class="req">*</span></label>
+      <span class="ajuda">Do primeiro toque até o valor entregue. Isso vira as telas.</span>
+      <textarea id="fluxo" data-campo="fluxo" data-req placeholder="1. Abre no talhão ativo&#10;2. Toca em &quot;nova foto&quot;&#10;3. Confirma o diagnóstico&#10;4. Vê o alerta na lista"></textarea>
+    </div>
+
+    <div class="campo">
+      <label for="telas">As 4 telas, com 3 elementos cada<span class="req">*</span></label>
+      <span class="ajuda">Nome da tela + o que aparece nela. É o wireframe em texto — eu construo a partir daqui.</span>
+      <span class="exemplo">"1. Início: mapa de talhões, semáforo de risco, botão nova foto. 2. Foto: câmera, talhão selecionado, botão enviar…"</span>
+      <textarea id="telas" data-campo="telas" data-req placeholder="1. Tela — elemento, elemento, elemento&#10;2. Tela — ...&#10;3. Tela — ...&#10;4. Tela — ..."></textarea>
+    </div>
+
+    <div class="campo">
+      <label for="metrica">Métrica de aprendizado do MVP<span class="req">*</span></label>
+      <span class="ajuda">Qual pergunta o MVP responde e qual número prova que funcionou. Sem isso, qualquer resultado parece válido.</span>
+      <span class="exemplo">"Pergunta: o produtor confia no diagnóstico por foto? Sucesso: 7 de 10 fotos com diagnóstico aceito sem corrigir."</span>
+      <textarea id="metrica" data-campo="metrica" data-req class="baixo" placeholder="Pergunta: ... | Sucesso: ..."></textarea>
+    </div>
+
+    <div class="campo">
+      <label for="simular">O que pode ser simulado<span class="req">*</span></label>
+      <span class="ajuda">Sem isso o build trava esperando API, login ou integração.</span>
+      <textarea id="simular" data-campo="simular" data-req class="baixo" placeholder="3 talhões de exemplo, diagnóstico fixo, sem IA real, sem login."></textarea>
+    </div>
+
+    <div class="campo">
+      <label for="fora">Fora do escopo<span class="req">*</span></label>
+      <span class="ajuda">O que vocês vão dizer "não" para a banca.</span>
+      <textarea id="fora" data-campo="fora" data-req class="baixo" placeholder="Pagamento, gov.br, integração com maquinário, relatório em PDF."></textarea>
+    </div>
+
+    <div class="campo">
+      <label for="outras">As outras 2 ideias do diagnóstico</label>
+      <span class="ajuda">Opcional. Uma linha cada.</span>
+      <textarea id="outras" data-campo="outras" class="baixo" placeholder="1. ...&#10;2. ..."></textarea>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section id="s4">
+    <h2><b>4</b> Arquitetura e restrição técnica</h2>
+    <span class="bloco-aula">Bloco 1 · stack, no-code e offline-first</span>
+    <p class="sub">O administrador não codifica, mas especifica, orça e gerencia. A banca vai perguntar "e se a internet cair?".</p>
+
+    <div class="campo">
+      <label for="stack">Arquitetura em 4 linhas<span class="req">*</span></label>
+      <span class="ajuda">Uma linha por camada, com a escolha e o motivo em poucas palavras.</span>
+      <span class="exemplo">Front: Flutter … | Back: Python … | Dados: Firebase … | Infra: Google Cloud …</span>
+      <textarea id="stack" data-campo="stack" data-req placeholder="Front: &#10;Back: &#10;Dados: &#10;Infra: "></textarea>
+    </div>
+
+    <div class="campo">
+      <label for="ferramenta">Como vão construir<span class="req">*</span></label>
+      <select id="ferramenta" data-campo="ferramenta" data-req>
+        <option value="">Selecione…</option>
+        <option>Antigravity / IA generativa</option>
+        <option>Bubble</option>
+        <option>FlutterFlow</option>
+        <option>Glide / AppSheet</option>
+        <option>Código próprio</option>
+        <option>Outra ferramenta</option>
+      </select>
+    </div>
+
+    <div class="campo">
+      <label>Funciona sem internet no campo?<span class="req">*</span></label>
+      <div class="opcoes inline" data-grupo="offline" data-req>
+        <label><input type="radio" name="offline" value="Sim">Sim</label>
+        <label><input type="radio" name="offline" value="Não">Não</label>
+        <label><input type="radio" name="offline" value="Não sei">Não sei</label>
+      </div>
+    </div>
+
+    <div class="campo oculto" id="boxSync">
+      <label for="sync">Como os dados sincronizam<span class="req">*</span></label>
+      <span class="ajuda">Onde fica salvo sem rede e quando sobe para a nuvem.</span>
+      <textarea id="sync" data-campo="sync" data-req class="baixo" placeholder="Salva no celular e envia quando encontra Wi-Fi na sede."></textarea>
+    </div>
+
+    <div class="campo oculto" id="boxConflito">
+      <label for="conflito">Dois usuários editam o mesmo registro. O que acontece?<span class="req">*</span></label>
+      <span class="ajuda">A pergunta que separa "tem offline" de "pensa em offline". Vale "não sei ainda — é um risco".</span>
+      <textarea id="conflito" data-campo="conflito" data-req class="baixo" placeholder="Ex.: vence a última edição; o app avisa que houve conflito."></textarea>
+    </div>
+
+    <div class="grid2">
+      <div class="campo">
+        <label>Dispositivo principal<span class="req">*</span></label>
+        <div class="opcoes" data-grupo="disp" data-req>
+          <label><input type="radio" name="disp" value="Android no campo">Android no campo</label>
+          <label><input type="radio" name="disp" value="Desktop na sede">Desktop na sede</label>
+          <label><input type="radio" name="disp" value="Ambos">Ambos</label>
+        </div>
+      </div>
+      <div class="campo">
+        <label>Login<span class="req">*</span></label>
+        <div class="opcoes" data-grupo="login" data-req>
+          <label><input type="radio" name="login" value="Não">Não precisa</label>
+          <label><input type="radio" name="login" value="Sim, simples e local">Sim, simples e local</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="campo">
+      <label>Origem dos dados<span class="req">*</span></label>
+      <div class="opcoes" data-grupo="dados" data-req>
+        <label><input type="checkbox" value="Digitados pelo usuário">Digitados pelo usuário</label>
+        <label><input type="checkbox" value="Planilha/CSV">Planilha ou CSV</label>
+        <label><input type="checkbox" value="API pública">API pública</label>
+        <label><input type="checkbox" value="Integração">Integração (Aegro, John Deere, WhatsApp)</label>
+        <label><input type="checkbox" value="Dados de exemplo">Dados de exemplo</label>
+      </div>
+      <div class="campo oculto" id="boxApi" style="margin-top:10px">
+        <label for="api">Qual API e qual informação?<span class="req">*</span></label>
+        <input type="text" id="api" data-campo="api" data-req placeholder="Open-Meteo — chuva por coordenada">
+      </div>
+    </div>
+
+    <div class="campo">
+      <label>Integrações desejadas</label>
+      <div class="opcoes inline" data-grupo="integracoes">
+        <label><input type="checkbox" value="Nenhuma">Nenhuma</label>
+        <label><input type="checkbox" value="WhatsApp">WhatsApp</label>
+        <label><input type="checkbox" value="Aegro">Aegro</label>
+        <label><input type="checkbox" value="John Deere">John Deere</label>
+        <label><input type="checkbox" value="gov.br">gov.br</label>
+        <label><input type="checkbox" value="Outra">Outra</label>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="campo">
+        <label for="custo">Custo estimado do MVP (R$)<span class="req">*</span></label>
+        <span class="ajuda">Some desenvolvimento, ferramentas e validação. Estimativa é aceita — com conta.</span>
+        <input type="number" id="custo" data-campo="custo" data-req min="0" step="100" placeholder="15000" inputmode="numeric">
+        <span class="fmt" id="fmt-custo"></span>
+      </div>
+      <div class="campo">
+        <label for="prazo">Prazo até a banca (semanas)<span class="req">*</span></label>
+        <input type="number" id="prazo" data-campo="prazo" data-req min="1" max="52" step="1" placeholder="5" inputmode="numeric">
+      </div>
+    </div>
+
+    <div class="campo">
+      <label for="naosabe">O que vocês não sabem fazer<span class="req">*</span></label>
+      <span class="ajuda">Honestidade técnica vale nota na arguição. "Não sabemos" + plano é melhor que blefe.</span>
+      <textarea id="naosabe" data-campo="naosabe" data-req class="baixo" placeholder="Ex.: não sabemos treinar o modelo de visão; vamos usar dados de exemplo e validar o fluxo."></textarea>
+    </div>
+
+    <div class="campo">
+      <label>Há dados pessoais ou sensíveis?<span class="req">*</span></label>
+      <div class="opcoes inline" data-grupo="lgpd" data-req>
+        <label><input type="radio" name="lgpd" value="Não">Não</label>
+        <label><input type="radio" name="lgpd" value="Sim">Sim</label>
+      </div>
+      <div class="campo oculto" id="boxLgpd" style="margin-top:10px">
+        <label for="dadosPessoais">Quais dados pessoais e por quê?<span class="req">*</span></label>
+        <textarea id="dadosPessoais" data-campo="dadosPessoais" data-req class="baixo" placeholder="Nome e telefone do produtor para contato, com consentimento."></textarea>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section id="s5">
+    <h2><b>5</b> Modelo de receita e unit economics</h2>
+    <span class="bloco-aula">Bloco 2 · receita, LTV e CAC</span>
+    <p class="sub">A banca vai pedir CAC, LTV e payback. Os campos calculam sozinhos — se a conta não fechar, o formulário avisa.</p>
+
+    <div class="campo">
+      <label for="modelo">Modelo de receita<span class="req">*</span></label>
+      <span class="ajuda">No agro, evite cobrar por usuário: cobre por hectare, cabeça ou resultado.</span>
+      <select id="modelo" data-campo="modelo" data-req>
+        <option value="">Selecione…</option>
+        <option>SaaS por hectare/cabeça</option>
+        <option>RaaS (pagamento por resultado)</option>
+        <option>Gilete e lâmina (hardware barato + assinatura)</option>
+        <option>Marketplace (take rate)</option>
+        <option>Freemium com upsell</option>
+        <option>Licença única</option>
+        <option>Outro</option>
+      </select>
+    </div>
+
+    <div class="campo">
+      <label for="justificativa">Por que esse modelo e não os outros?<span class="req">*</span></label>
+      <span class="ajuda">Conecte com a realidade de caixa do produtor: sazonalidade, aversão a custo fixo, ROI tangível.</span>
+      <textarea id="justificativa" data-campo="justificativa" data-req class="baixo" placeholder="Cobramos por hectare porque..."></textarea>
+    </div>
+
+    <div class="grid2">
+      <div class="campo">
+        <label for="preco">Preço e unidade<span class="req">*</span></label>
+        <span class="ajuda">Ex.: R$ 3,00/ha/ano · R$ 800/mês · 3% por transação.</span>
+        <input type="text" id="preco" data-campo="preco" data-req placeholder="R$ 3,00/ha/ano">
+      </div>
+      <div class="campo">
+        <label for="ticket">Ticket médio mensal (R$)<span class="req">*</span></label>
+        <span class="ajuda">Quanto um cliente paga por mês, na média.</span>
+        <input type="number" id="ticket" data-campo="ticket" data-req min="0" step="10" placeholder="800" inputmode="numeric">
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="campo">
+        <label for="contrato">Tempo médio de contrato (meses)<span class="req">*</span></label>
+        <span class="ajuda">Quanto tempo o cliente fica, na média.</span>
+        <input type="number" id="contrato" data-campo="contrato" data-req min="1" max="120" step="1" placeholder="36" inputmode="numeric">
+      </div>
+      <div class="campo">
+        <label for="cac">CAC (R$)<span class="req">*</span></label>
+        <span class="ajuda">Custo total de marketing e vendas para fechar 1 cliente.</span>
+        <input type="number" id="cac" data-campo="cac" data-req min="0" step="100" placeholder="6000" inputmode="numeric">
+      </div>
+    </div>
+
+    <div class="campo">
+      <label for="caccomp">Composição do CAC<span class="req">*</span></label>
+      <span class="ajuda">Visitas técnicas, dia de campo, comissão, tempo de vendedor. A banca pergunta "de onde vem esse número?".</span>
+      <textarea id="caccomp" data-campo="caccomp" data-req class="baixo" placeholder="2 visitas técnicas (R$ 1.200) + 1 dia de campo (R$ 3.000) + comissão (R$ 1.800)."></textarea>
+    </div>
+
+    <div class="grid2">
+      <div class="campo">
+        <label for="churn">Churn mensal estimado (%)<span class="req">*</span></label>
+        <span class="ajuda">No agro o churn é alto quando o onboarding é só por vídeo.</span>
+        <input type="number" id="churn" data-campo="churn" data-req min="0" max="100" step="0.5" placeholder="2" inputmode="decimal">
+      </div>
+      <div class="campo">
+        <label for="margem">Margem bruta (%)<span class="req">*</span></label>
+        <span class="ajuda">Receita menos custo de servir (nuvem, suporte, hardware).</span>
+        <input type="number" id="margem" data-campo="margem" data-req min="0" max="100" step="1" placeholder="70" inputmode="numeric">
+      </div>
+    </div>
+
+    <div class="painel" id="painel">
+      <h3>Calculado automaticamente</h3>
+      <div class="metricas">
+        <div class="metrica"><span>LTV</span><b id="m-ltv">—</b></div>
+        <div class="metrica"><span>LTV : CAC</span><b id="m-ratio">—</b></div>
+        <div class="metrica"><span>Payback</span><b id="m-payback">—</b></div>
+        <div class="metrica"><span>Receita ano 1</span><b id="m-receita">—</b></div>
+      </div>
+      <p class="nota" style="color:#c9d8d0;margin-top:12px">LTV simplificado = ticket × tempo de contrato. A regra de ouro da aula é LTV ≥ 3× CAC.</p>
+    </div>
+
+    <div class="alerta oculto" id="alertaRatio">
+      <b>LTV : CAC abaixo de 3×.</b> A banca vai perguntar por quê. Ajuste preço, tempo de contrato, CAC ou explique o caminho até 3× no campo abaixo.
+    </div>
+
+    <div class="campo oculto" id="boxAjuste">
+      <label for="ajuste">O que vão mudar para chegar a 3×?</label>
+      <textarea id="ajuste" data-campo="ajuste" class="baixo" placeholder="Ex.: vender via cooperativa para dividir o CAC; contrato de 24 meses; preço por hectare maior."></textarea>
+    </div>
+
+    <div class="campo">
+      <label for="clientes">Clientes pagantes no ano 1<span class="req">*</span></label>
+      <span class="ajuda">Quantos clientes vocês conseguem fechar até o fim do primeiro ano.</span>
+      <input type="number" id="clientes" data-campo="clientes" data-req min="0" step="1" placeholder="25" inputmode="numeric">
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section id="s6">
+    <h2><b>6</b> Mercado e go-to-market</h2>
+    <span class="bloco-aula">Blocos 3 e 4 · GTM e TAM/SAM/SOM</span>
+    <p class="sub">No agro a venda é por prova social: cooperativa, dia de campo e vizinho que usou. A banca quer o SOM, não o TAM de R$ 2 trilhões.</p>
+
+    <div class="grid2">
+      <div class="campo">
+        <label for="tam">TAM (R$)<span class="req">*</span></label>
+        <span class="ajuda">Todo o mercado possível do problema.</span>
+        <input type="number" id="tam" data-campo="tam" data-req min="0" step="1000" placeholder="2000000000" inputmode="numeric">
+        <span class="fmt" id="fmt-tam"></span>
+      </div>
+      <div class="campo">
+        <label for="sam">SAM (R$)<span class="req">*</span></label>
+        <span class="ajuda">O recorte que vocês conseguem atender hoje.</span>
+        <input type="number" id="sam" data-campo="sam" data-req min="0" step="1000" placeholder="80000000" inputmode="numeric">
+        <span class="fmt" id="fmt-sam"></span>
+      </div>
+    </div>
+
+    <div class="campo">
+      <label for="som">SOM (R$)<span class="req">*</span></label>
+      <span class="ajuda">O que vocês realmente capturam nos primeiros anos. É esse número que a banca leva a sério.</span>
+      <input type="number" id="som" data-campo="som" data-req min="0" step="1000" placeholder="1200000" inputmode="numeric">
+      <span class="fmt" id="fmt-som"></span>
+      <p class="nota" id="somNota"></p>
+    </div>
+
+    <div class="campo">
+      <label for="sommetodo">Como calcularam TAM, SAM e SOM<span class="req">*</span></label>
+      <span class="ajuda">Em uma linha: nº de clientes × ticket, ou área × preço por hectare.</span>
+      <textarea id="sommetodo" data-campo="sommetodo" data-req class="baixo" placeholder="SOM = 10 cooperativas × 40 produtores × 500 ha × R$ 3/ha/ano."></textarea>
+    </div>
+
+    <div class="campo">
+      <label for="canal">Canal principal de entrada<span class="req">*</span></label>
+      <select id="canal" data-campo="canal" data-req>
+        <option value="">Selecione…</option>
+        <option>Cooperativa / revenda</option>
+        <option>Dia de campo</option>
+        <option>Venda direta na fazenda</option>
+        <option>Inside sales / remoto</option>
+        <option>Parceria com ATER / agrônomo</option>
+        <option>Outro</option>
+      </select>
+    </div>
+
+    <div class="campo">
+      <label for="primeiros10">Os primeiros 10 clientes<span class="req">*</span></label>
+      <span class="ajuda">Quem são, onde estão e como chegam até vocês. Genérico aqui derruba o slide de GTM.</span>
+      <textarea id="primeiros10" data-campo="primeiros10" data-req placeholder="10 produtores da Cooperativa X em Sorriso, indicados pelo agrônomo parceiro, após 1 dia de campo."></textarea>
+    </div>
+
+    <div class="grid2">
+      <div class="campo">
+        <label for="ciclo">Ciclo de venda (dias)<span class="req">*</span></label>
+        <span class="ajuda">Do primeiro contato ao contrato assinado.</span>
+        <input type="number" id="ciclo" data-campo="ciclo" data-req min="0" step="1" placeholder="90" inputmode="numeric">
+      </div>
+      <div class="campo">
+        <label for="beta">Fazenda ou empresa de referência<span class="req">*</span></label>
+        <span class="ajuda">Quem topa ser o beta tester / prova social.</span>
+        <input type="text" id="beta" data-campo="beta" data-req placeholder="Fazenda Santa Rita, Sorriso (1.200 ha)">
+      </div>
+    </div>
+
+    <div class="campo">
+      <label for="barreira">Maior barreira de adoção<span class="req">*</span></label>
+      <span class="ajuda">Conectividade, resistência a mudar processo, preço, confiança, sazonalidade. Escolha uma e diga como contorna.</span>
+      <textarea id="barreira" data-campo="barreira" data-req class="baixo" placeholder="Barreira: ... | Como contornamos: ..."></textarea>
+    </div>
+
+    <div class="campo">
+      <label for="vantagem">Matriz de concorrência<span class="req">*</span></label>
+      <span class="ajuda">3 critérios em que vocês ganham e 1 em que perdem. Matriz só com vitórias a banca identifica.</span>
+      <span class="exemplo">"Ganhamos em: offline, preço/ha, suporte em campo. Perdemos em: integração com maquinário."</span>
+      <textarea id="vantagem" data-campo="vantagem" data-req class="baixo" placeholder="Ganhamos: ... | Perdemos: ..."></textarea>
+    </div>
+  </section>
+
+  <!-- 7 -->
+  <section id="s7">
+    <h2><b>7</b> Pitch e demo</h2>
+    <span class="bloco-aula">Bloco 4 · 10 slides, 10 minutos</span>
+    <p class="sub">O deck já tem estrutura definida na aula. Aqui vocês fecham o gancho, a demo e o pedido.</p>
+
+    <div class="campo">
+      <label for="gancho">Gancho de abertura<span class="req">*</span></label>
+      <span class="ajuda">Uma frase de impacto, com número. É o slide 1.</span>
+      <span class="exemplo">"Reduzimos o custo de pulverização em 30% sem perder produtividade."</span>
+      <input type="text" id="gancho" data-campo="gancho" data-req maxlength="140" placeholder="Frase de impacto">
+    </div>
+
+    <div class="campo">
+      <label for="demo">Cena da demo de 30 segundos<span class="req">*</span></label>
+      <span class="ajuda">O que aparece na tela, na ordem, e qual número impressiona.</span>
+      <textarea id="demo" data-campo="demo" data-req placeholder="Abro no talhão amarelo, tiro a foto, o app marca 87% de risco e mostra R$ 12 mil preservados."></textarea>
+    </div>
+
+    <div class="campo">
+      <label for="ask">O pedido (The Ask)<span class="req">*</span></label>
+      <span class="ajuda">Quanto, para quê e em quanto tempo.</span>
+      <span class="exemplo">"Buscamos R$ 150 mil para o MVP e validação em 5 fazendas em 6 meses."</span>
+      <textarea id="ask" data-campo="ask" data-req class="baixo" placeholder="Buscamos R$ ... para ... em ..."></textarea>
+    </div>
+
+    <div class="campo">
+      <label for="time">Por que este grupo<span class="req">*</span></label>
+      <span class="ajuda">Competências complementares e acesso que vocês têm (produtor na família, cooperativa, agrônomo).</span>
+      <textarea id="time" data-campo="time" data-req class="baixo" placeholder="Temos acesso a ... e sabemos ..."></textarea>
+    </div>
+
+    <div class="campo">
+      <label for="temor">As 3 perguntas que vocês temem<span class="req">*</span></label>
+      <span class="ajuda">Escreva a pergunta e a resposta. A banca vai fazer pelo menos uma delas.</span>
+      <span class="exemplo">"E se a internet cair? → offline-first, testado 7 dias sem sinal."</span>
+      <textarea id="temor" data-campo="temor" data-req placeholder="1. Pergunta → resposta&#10;2. ...&#10;3. ..."></textarea>
+    </div>
+
+    <div class="campo">
+      <label for="identidade">Identidade visual</label>
+      <span class="ajuda">Opcional. Nome definitivo, cores, logo — ou "sem preferência".</span>
+      <input type="text" id="identidade" data-campo="identidade" placeholder="Verde escuro + amarelo; logo no Drive">
+    </div>
+
+    <div class="grid2">
+      <div class="campo">
+        <label for="material">Link do material existente</label>
+        <span class="ajuda">Opcional. Drive com deck, one-pager ou planilha.</span>
+        <input type="text" id="material" data-campo="material" placeholder="https://drive.google.com/...">
+      </div>
+      <div class="campo">
+        <label for="referencia">Referência visual</label>
+        <span class="ajuda">Opcional. 1 ou 2 apps cujo visual vocês gostam.</span>
+        <input type="text" id="referencia" data-campo="referencia" placeholder="Aegro, Climate FieldView">
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 -->
+  <section id="s8">
+    <h2><b>8</b> Declarações</h2>
+    <p class="sub">Último passo antes de enviar.</p>
+
+    <div class="campo">
+      <div class="opcoes" data-grupo="autoriza" data-req>
+        <label><input type="checkbox" value="ideia própria">A ideia é própria do grupo, sem cópia de produto existente.</label>
+        <label><input type="checkbox" value="uso do nome autorizado">Autorizo o uso do nome dos integrantes no material da disciplina.</label>
+        <label><input type="checkbox" value="dados fictícios">Os dados de exemplo são fictícios e estarão rotulados no app.</label>
+        <label><input type="checkbox" value="gravação da demo">Autorizo a gravação da apresentação para fins de avaliação.</label>
+      </div>
+    </div>
+  </section>
+
+  <p class="rodape">O rascunho fica no seu navegador. Nada é enviado até você clicar em <b>Enviar para a planilha</b>.</p>
+</div>
+</main>
+
+<footer class="acoes">
+  <div class="wrap">
+    <button class="primario" id="btnEnviar">Enviar para a planilha</button>
+    <button class="secundario" id="btnMd">Baixar .md</button>
+    <button class="secundario" id="btnCopiar">Copiar</button>
+    <button class="fantasma" id="btnLimpar">Limpar</button>
+    <span class="status" id="status"></span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  var CHAVE = "inovagro:briefing:v2";
+  var CHAVE_ENVIO = "inovagro:ultimo-envio:v1";
+
+  // ↓↓↓ CONFIGURAR AQUI ↓↓↓
+  // 1. Publique o apps-script.gs como Web App ("Qualquer pessoa")
+  // 2. Cole abaixo a URL que termina em /exec
+  // 3. Use o mesmo TOKEN do apps-script.gs
+  var ENDPOINT = "https://script.google.com/macros/s/AKfycbwPBhViFqDSruDHClbqqAfC_vEm_U2tQHdceuah1m-qfvcwIqjbccWG6ZYky9Jrz3SPaw/exec";
+  var TOKEN = "inovagro-8k3p2m";
+  // ↑↑↑ CONFIGURAR AQUI ↑↑↑
+
+  var NUMERICOS = ["custo","prazo","ticket","contrato","cac","churn","margem","clientes","tam","sam","som","ciclo"];
+
+  function campos(){ return Array.prototype.slice.call(document.querySelectorAll("[data-campo]")); }
+  function grupos(){ return Array.prototype.slice.call(document.querySelectorAll("[data-grupo]")); }
+
+  function grupoValor(el){
+    if (el.querySelector("input[type=radio]")) {
+      var r = el.querySelector("input[type=radio]:checked");
+      return r ? r.value : "";
+    }
+    return Array.prototype.slice.call(el.querySelectorAll("input[type=checkbox]:checked"))
+      .map(function(i){ return i.value; });
+  }
+
+  function vazio(v){
+    if (Array.isArray(v)) return v.length === 0;
+    return !v || !String(v).trim();
+  }
+
+  function num(v){
+    if (typeof v === "number") return isFinite(v) ? v : 0;
+    var n = parseFloat(String(v || "").replace(/\./g, "").replace(",", "."));
+    return isFinite(n) ? n : 0;
+  }
+
+  function fmtBRL(n){
+    if (!isFinite(n) || n <= 0) return "—";
+    return n.toLocaleString("pt-BR", {style:"currency", currency:"BRL", maximumFractionDigits:0});
+  }
+
+  function fmtNum(n, casas){
+    if (!isFinite(n) || n <= 0) return "—";
+    return n.toLocaleString("pt-BR", {minimumFractionDigits:0, maximumFractionDigits:casas || 1});
+  }
+
+  function calcular(d){
+    var ticket = num(d.ticket), contrato = num(d.contrato), cac = num(d.cac);
+    var clientes = num(d.clientes), tam = num(d.tam), sam = num(d.sam), som = num(d.som);
+    var ltv = ticket * contrato;
+    return {
+      ltv: ltv,
+      ratio: cac > 0 ? ltv / cac : 0,
+      payback: ticket > 0 ? cac / ticket : 0,
+      receita: clientes * ticket * 12,
+      somTam: tam > 0 ? (som / tam) * 100 : 0,
+      somSam: sam > 0 ? (som / sam) * 100 : 0
+    };
+  }
+
+  function visivel(el){
+    return !el.closest(".oculto");
+  }
+
+  function progresso(){
+    var total = 0, ok = 0;
+    campos().forEach(function(el){
+      if (!el.hasAttribute("data-req") || !visivel(el)) return;
+      total++;
+      if (!vazio(el.value.trim())) ok++;
+    });
+    grupos().forEach(function(el){
+      if (!el.hasAttribute("data-req") || !visivel(el)) return;
+      total++;
+      if (!vazio(grupoValor(el))) ok++;
+    });
+    var p = total ? Math.round(ok * 100 / total) : 0;
+    document.getElementById("progresso").style.width = p + "%";
+    document.getElementById("pct").textContent = p + "%";
+  }
+
+  function marcarErros(){
+    var erros = [];
+    campos().forEach(function(el){
+      var ruim = el.hasAttribute("data-req") && visivel(el) && vazio(el.value.trim());
+      el.classList.toggle("invalid", ruim);
+      if (ruim) erros.push(el);
+    });
+    grupos().forEach(function(el){
+      var ruim = el.hasAttribute("data-req") && visivel(el) && vazio(grupoValor(el));
+      el.classList.toggle("invalid", ruim);
+      if (ruim) erros.push(el);
+    });
+    return erros;
+  }
+
+  function limparErros(){
+    document.querySelectorAll(".invalid").forEach(function(el){ el.classList.remove("invalid"); });
+  }
+
+  function focarPrimeiroErro(){
+    var alvo = document.querySelector(".invalid");
+    if (!alvo) return;
+    var secao = alvo.closest("section");
+    if (secao && secao.scrollIntoView) {
+      try { secao.scrollIntoView({behavior:"smooth", block:"start"}); } catch(e) {}
+    }
+  }
+
+  function dados(){
+    var d = {};
+    campos().forEach(function(el){ d[el.dataset.campo] = el.value.trim(); });
+    grupos().forEach(function(el){ d[el.dataset.grupo] = grupoValor(el); });
+    NUMERICOS.forEach(function(k){ if (k in d) d[k] = num(d[k]); });
+    var c = calcular(d);
+    d.ltv = Math.round(c.ltv);
+    d.ltvCac = Math.round(c.ratio * 10) / 10;
+    d.payback = Math.round(c.payback * 10) / 10;
+    d.receitaAno1 = Math.round(c.receita);
+    d.somTam = Math.round(c.somTam * 10) / 10;
+    d.geradoEm = new Date().toLocaleString("pt-BR");
+    return d;
+  }
+
+  function lista(v){ return Array.isArray(v) ? v.join("; ") : (v || "—"); }
+  function ou(v){ return (v === 0 ? "0" : (v || "—")); }
+
+  function briefing(d){
+    var c = calcular(d);
+    var l = [];
+    l.push("# BRIEFING DE BUILD — " + ou(d.produto));
+    l.push("");
+    l.push(d.grupo + " · 8º Adm Cuiabá · Inovação e Tecnologia Aplicada ao Agronegócio");
+    l.push("Gerado em " + d.geradoEm);
+    l.push("");
+    l.push("## 0. Painel de números (calculado)");
+    l.push("- LTV: " + fmtBRL(c.ltv) + " (ticket × contrato)");
+    l.push("- LTV : CAC: " + (c.ratio ? fmtNum(c.ratio, 1) + "×" : "—") + " (regra da aula: ≥ 3×)");
+    l.push("- Payback do CAC: " + (c.payback ? fmtNum(c.payback, 1) + " meses" : "—"));
+    l.push("- Receita ano 1: " + fmtBRL(c.receita) + " (" + ou(d.clientes) + " clientes)");
+    l.push("- SOM / TAM: " + (c.somTam ? fmtNum(c.somTam, 2) + "%" : "—"));
+    l.push("");
+    l.push("## 1. Produto e equipe");
+    l.push("- Nome: " + ou(d.produto));
+    l.push("- Frase (≤140): " + ou(d.promessa));
+    l.push("- Ponto focal: " + ou(d.focal) + " · " + ou(d.zap) + " · " + ou(d.email));
+    l.push("- Integrantes:");
+    l.push(ou(d.integrantes));
+    l.push("");
+    l.push("## 2. Problema e evidência");
+    l.push("- Dor: " + ou(d.dor));
+    l.push("- Quem sente: " + lista(d.quem));
+    l.push("- Persona: " + ou(d.persona));
+    l.push("- Hipótese: " + ou(d.hipotese));
+    l.push("- Número: " + ou(d.numero) + " · fonte: " + ou(d.fonte));
+    l.push("- Entrevistas: " + ou(d.entrevistas));
+    l.push("- O que mudou com as entrevistas: " + ou(d.aprendizados));
+    l.push("- Fala literal: \"" + ou(d.frase) + "\"");
+    l.push("- Disposição a pagar: " + ou(d.pagaria));
+    l.push("- Alternativas atuais: " + ou(d.concorrentes));
+    l.push("");
+    l.push("## 3. Solução e escopo do MVP");
+    l.push("- Funcionalidades:");
+    l.push(ou(d.funcs));
+    l.push("- Fluxo:");
+    l.push(ou(d.fluxo));
+    l.push("- Telas:");
+    l.push(ou(d.telas));
+    l.push("- Métrica de aprendizado: " + ou(d.metrica));
+    l.push("- Pode ser simulado: " + ou(d.simular));
+    l.push("- Fora do escopo: " + ou(d.fora));
+    if (d.outras) { l.push("- Outras ideias: " + d.outras); }
+    l.push("");
+    l.push("## 4. Arquitetura");
+    l.push(ou(d.stack));
+    l.push("- Ferramenta: " + ou(d.ferramenta));
+    l.push("- Offline: " + lista(d.offline));
+    if (d.sync) l.push("- Sincronização: " + d.sync);
+    if (d.conflito) l.push("- Conflito de edição: " + d.conflito);
+    l.push("- Login: " + lista(d.login) + " · Dispositivo: " + lista(d.disp));
+    l.push("- Origem dos dados: " + lista(d.dados) + (d.api ? " · API: " + d.api : ""));
+    l.push("- Integrações: " + lista(d.integracoes));
+    l.push("- Custo estimado: " + fmtBRL(num(d.custo)) + " · Prazo: " + ou(d.prazo) + " semanas");
+    l.push("- O que não sabem fazer: " + ou(d.naosabe));
+    l.push("- LGPD: " + lista(d.lgpd) + (d.dadosPessoais ? " — " + d.dadosPessoais : ""));
+    l.push("");
+    l.push("## 5. Receita");
+    l.push("- Modelo: " + ou(d.modelo));
+    l.push("- Justificativa: " + ou(d.justificativa));
+    l.push("- Preço: " + ou(d.preco) + " · Ticket: " + fmtBRL(num(d.ticket)) + "/mês");
+    l.push("- Contrato: " + ou(d.contrato) + " meses · CAC: " + fmtBRL(num(d.cac)));
+    l.push("- Composição do CAC: " + ou(d.caccomp));
+    l.push("- Churn: " + ou(d.churn) + "%/mês · Margem bruta: " + ou(d.margem) + "%");
+    l.push("- Clientes no ano 1: " + ou(d.clientes));
+    if (d.ajuste) l.push("- Ajuste para 3×: " + d.ajuste);
+    l.push("");
+    l.push("## 6. Mercado e GTM");
+    l.push("- TAM: " + fmtBRL(num(d.tam)) + " · SAM: " + fmtBRL(num(d.sam)) + " · SOM: " + fmtBRL(num(d.som)));
+    l.push("- Método: " + ou(d.sommetodo));
+    l.push("- Canal: " + ou(d.canal));
+    l.push("- Primeiros 10: " + ou(d.primeiros10));
+    l.push("- Ciclo de venda: " + ou(d.ciclo) + " dias · Beta: " + ou(d.beta));
+    l.push("- Barreira: " + ou(d.barreira));
+    l.push("- Matriz: " + ou(d.vantagem));
+    l.push("");
+    l.push("## 7. Pitch");
+    l.push("- Gancho: " + ou(d.gancho));
+    l.push("- Demo 30s: " + ou(d.demo));
+    l.push("- Pedido: " + ou(d.ask));
+    l.push("- Por que este grupo: " + ou(d.time));
+    l.push("- Perguntas temidas: " + ou(d.temor));
+    l.push("- Identidade: " + ou(d.identidade) + " · Referência: " + ou(d.referencia));
+    l.push("- Material: " + ou(d.material));
+    l.push("");
+    l.push("## 8. Restrições fixas de build");
+    l.push("- Arquivo único HTML, sem dependências externas");
+    l.push("- Mobile-first, 375×740, zero rolagem horizontal");
+    l.push("- Estado em localStorage, funciona offline");
+    l.push("- Dados de exemplo embutidos e rotulados (`exemplo`, `simulado`, `a validar`)");
+    l.push("- Máximo 4 telas, 1 fluxo principal");
+    l.push("- Acessibilidade: contraste AA, fontes ≥16 px, alvos de toque ≥44 px");
+    l.push("");
+    l.push("## 9. Declarações");
+    l.push("- " + lista(d.autoriza));
+    l.push("");
+    return l.join("\n");
+  }
+
+  function status(msg, tipo, ms){
+    var s = document.getElementById("status");
+    s.textContent = msg;
+    s.className = "status" + (tipo ? " " + tipo : "");
+    if (tipo) {
+      setTimeout(function(){
+        if (s.textContent === msg) { s.textContent = ""; s.className = "status"; }
+      }, typeof ms === "number" ? ms : 4000);
+    }
+  }
+
+  function endpointOk(){
+    return /^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec/.test(ENDPOINT);
+  }
+
+  function baixar(nome, texto, tipo){
+    var blob = new Blob([texto], {type: tipo || "text/plain;charset=utf-8"});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = nome;
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 1500);
+  }
+
+  function nomeArquivo(ext){
+    var p = (document.getElementById("produto").value || "ideia")
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-|-$/g, "").toLowerCase();
+    return "briefing-" + (p || "ideia") + "." + ext;
+  }
+
+  function salvar(){
+    try { localStorage.setItem(CHAVE, JSON.stringify(dados())); } catch(e) {}
+  }
+
+  function restaurar(){
+    var bruto;
+    try { bruto = localStorage.getItem(CHAVE); } catch(e) {}
+    if (!bruto) return;
+    var d;
+    try { d = JSON.parse(bruto); } catch(e) { return; }
+    campos().forEach(function(el){
+      if (d[el.dataset.campo] !== undefined && d[el.dataset.campo] !== null) {
+        el.value = d[el.dataset.campo];
+      }
+    });
+    grupos().forEach(function(el){
+      var vals = d[el.dataset.grupo];
+      if (!Array.isArray(vals)) vals = [];
+      el.querySelectorAll("input[type=checkbox]").forEach(function(c){
+        c.checked = vals.indexOf(c.value) > -1;
+      });
+      el.querySelectorAll("input[type=radio]").forEach(function(r){
+        r.checked = r.value === d[el.dataset.grupo];
+      });
+    });
+    atualizarCondicionais();
+    atualizarContador();
+    atualizarPainel();
+    progresso();
+  }
+
+  function atualizarCondicionais(){
+    var dadosMarcados = grupoValor(document.querySelector('[data-grupo="dados"]'));
+    document.getElementById("boxApi").classList.toggle("oculto", dadosMarcados.indexOf("API pública") === -1);
+
+    var off = grupoValor(document.querySelector('[data-grupo="offline"]'));
+    var sim = off === "Sim";
+    document.getElementById("boxSync").classList.toggle("oculto", !sim);
+    document.getElementById("boxConflito").classList.toggle("oculto", !sim);
+
+    var lg = grupoValor(document.querySelector('[data-grupo="lgpd"]'));
+    document.getElementById("boxLgpd").classList.toggle("oculto", lg !== "Sim");
+
+    progresso();
+  }
+
+  function atualizarContador(){
+    var el = document.getElementById("promessa");
+    var n = el.value.length;
+    var c = document.getElementById("cPromessa");
+    c.textContent = n + " / 140";
+    c.classList.toggle("estouro", n >= 130);
+  }
+
+  function atualizarPainel(){
+    var d = {
+      ticket: document.getElementById("ticket").value,
+      contrato: document.getElementById("contrato").value,
+      cac: document.getElementById("cac").value,
+      clientes: document.getElementById("clientes").value,
+      tam: document.getElementById("tam").value,
+      sam: document.getElementById("sam").value,
+      som: document.getElementById("som").value
+    };
+    var c = calcular(d);
+    var eLtv = document.getElementById("m-ltv");
+    var eRatio = document.getElementById("m-ratio");
+    var ePay = document.getElementById("m-payback");
+    var eRec = document.getElementById("m-receita");
+
+    eLtv.textContent = fmtBRL(c.ltv);
+    eRatio.textContent = c.ratio ? fmtNum(c.ratio, 1) + "×" : "—";
+    eRatio.className = c.ratio ? (c.ratio >= 3 ? "ok" : "ruim") : "";
+    ePay.textContent = c.payback ? fmtNum(c.payback, 1) + " m" : "—";
+    eRec.textContent = fmtBRL(c.receita);
+
+    var alerta = document.getElementById("alertaRatio");
+    var boxAjuste = document.getElementById("boxAjuste");
+    var mostrar = c.ratio > 0 && c.ratio < 3;
+    alerta.classList.toggle("oculto", !mostrar);
+    boxAjuste.classList.toggle("oculto", !mostrar);
+
+    var nota = document.getElementById("somNota");
+    var vTam = num(document.getElementById("tam").value);
+    var vSam = num(document.getElementById("sam").value);
+    var vSom = num(document.getElementById("som").value);
+    if (vSom > 0 && vSam > 0 && vSom > vSam) {
+      nota.className = "nota erro";
+      nota.innerHTML = "SOM (" + fmtBRL(vSom) + ") maior que o SAM (" + fmtBRL(vSam) +
+        "). O SOM é um recorte do SAM — ajuste antes de enviar.";
+    } else {
+      nota.className = "nota";
+      if (c.somTam > 0) {
+        nota.innerHTML = "Seu SOM equivale a <b>" + fmtNum(c.somTam, 2) + "%</b> do TAM" +
+          (c.somSam > 0 ? " e <b>" + fmtNum(c.somSam, 1) + "%</b> do SAM" : "") + "." +
+          (c.somTam > 10 ? " Acima de 10% costuma soar otimista para a banca." : "");
+      } else {
+        nota.textContent = "Preencha TAM e SOM para ver a proporção.";
+      }
+    }
+
+    [["custo","fmt-custo"],["tam","fmt-tam"],["sam","fmt-sam"],["som","fmt-som"]].forEach(function(par){
+      var alvo = document.getElementById(par[1]);
+      var valor = num(document.getElementById(par[0]).value);
+      alvo.textContent = valor > 0 ? "= " + fmtBRL(valor) : "";
+    });
+    progresso();
+  }
+
+  document.addEventListener("input", function(e){
+    var alvo = e.target;
+    if (alvo.id === "promessa") atualizarContador();
+    if (alvo.closest('[data-grupo="dados"], [data-grupo="offline"], [data-grupo="lgpd"]')) atualizarCondicionais();
+    if (NUMERICOS.indexOf(alvo.dataset.campo) > -1) atualizarPainel();
+    limparErros();
+    progresso();
+    salvar();
+  });
+
+  document.getElementById("btnMd").addEventListener("click", function(){
+    if (marcarErros().length) {
+      status("Faltam campos obrigatórios", "erro");
+      focarPrimeiroErro();
+      return;
+    }
+    baixar(nomeArquivo("md"), briefing(dados()), "text/markdown;charset=utf-8");
+    status("Briefing baixado", "ok");
+  });
+
+  document.getElementById("btnEnviar").addEventListener("click", async function(){
+    if (marcarErros().length) {
+      status("Faltam campos obrigatórios", "erro");
+      focarPrimeiroErro();
+      return;
+    }
+    if (!endpointOk()) {
+      status("Endpoint não configurado — use o .md", "erro", 6000);
+      return;
+    }
+
+    var botao = this;
+    var d = dados();
+    var texto = briefing(d);
+    var rotulo = botao.textContent;
+    botao.disabled = true;
+    botao.textContent = "Enviando…";
+    status("Enviando…", "");
+
+    try {
+      var resp = await fetch(ENDPOINT, {
+        method: "POST",
+        headers: {"Content-Type": "text/plain;charset=utf-8"},
+        body: JSON.stringify({token: TOKEN, payload: d, briefing: texto, versao: 2}),
+        redirect: "follow"
+      });
+      var bruto = await resp.text();
+      var r = {};
+      try { r = JSON.parse(bruto); } catch (e) {}
+      if (!resp.ok || r.ok === false) throw new Error(r.erro || ("HTTP " + resp.status));
+
+      try {
+        localStorage.setItem(CHAVE_ENVIO, JSON.stringify({
+          grupo: d.grupo, produto: d.produto, em: new Date().toISOString(), acao: r.acao || "novo"
+        }));
+      } catch (e) {}
+
+      status(r.acao === "atualizado" ? "Resposta atualizada" : "Enviado — recebido", "ok", 8000);
+    } catch (err) {
+      baixar(nomeArquivo("md"), texto, "text/markdown;charset=utf-8");
+      status("Falhou: " + (err.message || "sem conexão") + " — .md baixado como backup", "erro", 12000);
+    } finally {
+      botao.disabled = false;
+      botao.textContent = rotulo;
+    }
+  });
+
+  document.getElementById("btnCopiar").addEventListener("click", function(){
+    if (marcarErros().length) { status("Faltam campos obrigatórios", "erro"); return; }
+    var texto = briefing(dados());
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(texto).then(function(){
+        status("Copiado", "ok");
+      }, function(){ status("Use o download", "erro"); });
+    } else {
+      var t = document.createElement("textarea");
+      t.value = texto; document.body.appendChild(t); t.select();
+      try { document.execCommand("copy"); status("Copiado", "ok"); }
+      catch(e){ status("Use o download", "erro"); }
+      document.body.removeChild(t);
+    }
+  });
+
+  document.getElementById("btnLimpar").addEventListener("click", function(){
+    if (!confirm("Apagar tudo o que foi preenchido neste navegador?")) return;
+    try { localStorage.removeItem(CHAVE); } catch(e) {}
+    location.reload();
+  });
+
+  var chips = Array.prototype.slice.call(document.querySelectorAll(".chip"));
+  if ("IntersectionObserver" in window) {
+    var obs = new IntersectionObserver(function(entradas){
+      entradas.forEach(function(en){
+        if (!en.isIntersecting) return;
+        chips.forEach(function(c){ c.classList.toggle("ativo", c.getAttribute("href") === "#" + en.target.id); });
+      });
+    }, {rootMargin:"-40% 0px -55% 0px"});
+    document.querySelectorAll("main section").forEach(function(s){ obs.observe(s); });
+  }
+
+  window.addEventListener("beforeunload", salvar);
+
+  restaurar();
+  atualizarCondicionais();
+  atualizarContador();
+  atualizarPainel();
+  progresso();
+})();
+</script>
+</body>
+</html>
